@@ -53,7 +53,7 @@ Here is an example of a 30, 50, 20 split:
 
     probability_route 30, 'get', '/' => sub { "30% chances to get there" };
     probability_route 50, 'get', '/' => sub { "50% chances to get there" };
-    probability_route 30, 'get', '/' => sub { "20% chances to get there" };
+    probability_route 20, 'get', '/' => sub { "20% chances to get there" };
 
 To provide stability for each user, the session ID is used as a pivot, to build
 a _user\_score_, which is an number between 0 and 99.
