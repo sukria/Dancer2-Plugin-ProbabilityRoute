@@ -13,6 +13,7 @@ Build.bat
 /META.yml
 /META.json
 /MYMETA.*
+Dancer2-Plugin-ProbabilityRoute*
 nytprof.out
 /pm_to_blib
 *.o
