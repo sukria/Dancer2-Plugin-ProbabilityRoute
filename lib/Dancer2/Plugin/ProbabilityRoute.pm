@@ -159,7 +159,7 @@ design and helped me make this module so easy to write it took less than half
 a day to get it into CPAN.
 
 The second release was made thanks to the observations of
-L<Russell Jenkins|http://search.cpan.org/~russellj/> who suggested a better API,
-allowing for a more straight-forward approach.
+L<Russell Jenkins|https://metacpan.org/author/RUSSELLJ> who suggested a better
+API, allowing for a more straight-forward approach.
 
 =pod
