@@ -4,7 +4,7 @@ Dancer2::Plugin::ProbabilityRoute - plugin to define behavior with probability m
 
 # VERSION
 
-version 0.02
+version 0.03
 
 # SYNOPSIS
 
@@ -18,7 +18,7 @@ version 0.02
             "A is returned for you";
         },
         50 => sub {
-            "A is returned for you";
+            "B is returned for you";
         }
     };
 
@@ -43,16 +43,25 @@ route as long as they don't purge their cookies.
 
 ## probability\_route
 
-Use this keyword to declare a route that gets triggered only under a given
-probability.
-The sequence is important: the first declaration for a given method/path tuple
-is the default version of the route.
+Use this keyword to declare a route that is devided into multiple versions,
+each them triggered for a certain percentage of users.
+
+The sequence is important: the first declaration is the default version of
+the route (if the user has no cookies).
 
 Here is an example of a 30, 50, 20 split:
 
-    probability_route 30, 'get', '/' => sub { "30% chances to get there" };
-    probability_route 50, 'get', '/' => sub { "50% chances to get there" };
-    probability_route 20, 'get', '/' => sub { "20% chances to get there" };
+    get '/test' => probability
+        30 => sub {
+            "30% of users see that.";
+        },
+        50 => sub {
+            "50% of users see that.";
+        },
+        20 => sub {
+            "20% of users see that.";
+        },
+    };
 
 To provide stability for each user, the session ID is used as a pivot, to build
 a _user\_score_, which is an number between 0 and 99.
@@ -88,6 +97,10 @@ This module has been written during the
 [Fabrice Gabolde](https://metacpan.org/author/FGA) contributed heavily to the
 design and helped me make this module so easy to write it took less than half
 a day to get it into CPAN.
+
+The second release was made thanks to the observations of
+[Russell Jenkins](http://search.cpan.org/~russellj/) who suggested a better API,
+allowing for a more straight-forward approach.
 
 # AUTHOR
 
