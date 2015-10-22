@@ -45,7 +45,7 @@ my $_routes = {};
 
 =method probability_route
 
-Use this keyword to declare a route that is devided into multiple versions,
+Use this keyword to declare a route that is divided into multiple versions,
 each them triggered for a certain percentage of users.
 
 The sequence is important: the first declaration is the default version of
@@ -119,7 +119,7 @@ register 'probability' => sub {
 
 =method probability_user_score
 
-Use this keyword to fetch the current user's score used to pick wich version
+Use this keyword to fetch the current user's score used to pick which version
 of the route are chosen. It can be handy if you wish to define your own
 conditional branches.
 
@@ -149,7 +149,7 @@ register_plugin;
 1;
 __END__
 
-=head1 ACKNOWLEDGEMENTS
+=head1 ACKNOWLEDGMENTS
 
 This module has been written during the
 L<Perl Dancer 2015|https://www.perl.dance/> conference.
