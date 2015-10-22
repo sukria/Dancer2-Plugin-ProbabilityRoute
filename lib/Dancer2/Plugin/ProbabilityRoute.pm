@@ -23,15 +23,14 @@ route as long as they don't purge their cookies.
     use Dancer2::Plugin::ProbabilityRoute;
 
     # a basic A/B test (50/50 chances)
-    probability_route 50, 'get' => '/test' => sub {
+    get '/test' => probability
+        50 => sub {
             "A is returned for you";
+        },
+        50 => sub {
+            "A is returned for you";
+        }
     };
-
-    probability_route 50, 'get' => '/test' => sub {
-            "B is returned for you";
-    };
-
-    declare_probability_routes;
 
     1;
 =cut
@@ -69,68 +68,44 @@ if it's not the case.
 
 =cut
 
-register 'probability_route' => sub {
-    my ($dsl, $probability, $method, $path, $code) = @_;
+register 'probability' => sub {
+    my ($dsl, @routes) = @_;
 
-    $_routes->{$path}->{$method}->{total_score} ||= 0;
-    $_routes->{$path}->{$method}->{codes} ||= [];
+    croak "Odd number of elements in routes"
+        if @routes % 2 != 0;
 
-    $_routes->{$path}->{$method}->{total_score} += $probability;
+    my $route_score = 0;
+    my @_probability_routes;
 
-    my $route_score = $_routes->{$path}->{$method}->{total_score};
-    if ($route_score > 100) {
-        croak "Probability for route [$method, '$path'] exceeds 100 ($route_score)";
+    for (my $i=0; $i<@routes; $i+=2) {
+        my ($probability, $code) = ($routes[$i], $routes[$i+1]);
+        $route_score += $probability;
+        push @_probability_routes, [$probability, $code];
+    }
+    
+    if ($route_score < 100) {
+        croak "Probability for route is lower than 100 ($route_score)";
     }
 
-    push @{$_routes->{$path}->{$method}->{codes}}, [$probability, $code];
-};
-
-=method declare_probability_routes
-
-This keyword must be called at the end of your plugin, to compile all the
-pseudo-routes defined with probability_route();
-
-It will perform sanity checks about the probability used for each routes, and
-will make sure you have exactly 100 of probabilities in each method/path tuples.
-
-=cut
-
-register 'declare_probability_routes' => sub {
-    my ($dsl) = shift;
-
-    foreach my $path (keys %{$_routes}) {
-        foreach my $method (keys %{$_routes->{$path}}) {
-            my $route_score = $_routes->{$path}->{$method}->{total_score};
-            if ($route_score < 100) {
-                croak "Probability for route [$method, '$path'] is lower than 100 ($route_score)";
-            }
-
-            my $route_codes = $_routes->{$path}->{$method}->{codes};
-            my $compiled_code = sub {
-                # we need a web context to execute that, so it cannot be moved
-                # out of the route's code
-                my $user_score;
-                if (defined $dsl->session) {
-                    $user_score = oat($dsl->session->id) % 100;
-                }
-
-                my $probability_match = 0;
-
-                foreach my $code (@{$route_codes}) {
-                    my ($probability, $code) = (@$code);
-                    $probability_match += $probability;
-
-                    if ($user_score < $probability_match) {
-                        return $code->();
-                    }
-                }
-            };
-            # Now we can define the real route that will host all the pseudo routes
-            $dsl->$method($path, $compiled_code);
+    my $compiled_code = sub {
+        # we need a web context to execute that, so it cannot be moved
+        # out of the route's code
+        my $user_score;
+        if (defined $dsl->session) {
+            $user_score = oat($dsl->session->id) % 100;
         }
-    }
-    # cleanup the local singleton to avoid collisions
-    $_routes = {};
+
+        my $probability_match = 0;
+
+        foreach my $route (@_probability_routes) {
+            my ($probability, $code) = (@$route);
+            $probability_match += $probability;
+
+            if ($user_score < $probability_match) {
+                return $code->();
+            }
+        }
+    };
 };
 
 =method probability_user_score
