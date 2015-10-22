@@ -43,7 +43,7 @@ use Carp 'croak';
 
 my $_routes = {};
 
-=method probability_route
+=method probability
 
 Use this keyword to declare a route that is devided into multiple versions,
 each them triggered for a certain percentage of users.
@@ -71,7 +71,7 @@ a I<user_score>, which is an number between 0 and 99.
 That number can also be used in regular routes or templates to create your own
 conditions. See C<probability_user_score> for details.
 
-Note that the sum of all the probability_route statements must equal 100. A
+Note that the sum of all the C<probability> statements must equal 100. A
 validation is made when the plugin processes all the declarations, and croaks
 if it's not the case.
 
