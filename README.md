@@ -4,24 +4,23 @@ Dancer2::Plugin::ProbabilityRoute - plugin to define behavior with probability m
 
 # VERSION
 
-version 0.01
+version 0.02
 
 # SYNOPSIS
 
     package myApp;
     use Dancer2;
-    use Dancer2::Plugin::ABTest;
+    use Dancer2::Plugin::ProbabilityRoute;
 
     # a basic A/B test (50/50 chances)
-    probability_route 50, 'get' => '/test' => sub {
+    get '/test' => probability
+        50 => sub {
             "A is returned for you";
+        },
+        50 => sub {
+            "A is returned for you";
+        }
     };
-
-    probability_route 50, 'get' => '/test' => sub {
-            "B is returned for you";
-    };
-
-    declare_probability_routes;
 
     1;
 
@@ -64,14 +63,6 @@ conditions. See `probability_user_score` for details.
 Note that the sum of all the probability\_route statements must equal 100. A
 validation is made when the plugin processes all the declarations, and croaks
 if it's not the case.
-
-## declare\_probability\_routes
-
-This keyword must be called at the end of your plugin, to compile all the
-pseudo-routes defined with probability\_route();
-
-It will perform sanity checks about the probability used for each routes, and
-will make sure you have exactly 100 of probabilities in each method/path tuples.
 
 ## probability\_user\_score
 
