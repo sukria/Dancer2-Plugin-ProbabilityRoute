@@ -20,7 +20,7 @@ route as long as they don't purge their cookies.
 
     package myApp;
     use Dancer2;
-    use Dancer2::Plugin::ABTest;
+    use Dancer2::Plugin::ProbabilityRoute;
 
     # a basic A/B test (50/50 chances)
     probability_route 50, 'get' => '/test' => sub {
